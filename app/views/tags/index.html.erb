@@ -1,0 +1,28 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>タグ一覧</h1>
+  <%= link_to "＋ タグを追加する", new_tag_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>タグ名</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @tags.each do |tag| %>
+          <tr>
+            <td><%= tag.name %></td>
+            <td>
+              <%= link_to "編集", edit_tag_path(tag), class: "btn btn-sm btn-warning" %>
+              <%= link_to "削除", tag_path(tag), class: "btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

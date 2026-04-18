@@ -1,0 +1,248 @@
+/*
+ * This is a manifest file that'll be compiled into application.css.
+ *
+ * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
+ * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
+ * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
+ * depending on specificity.
+ *
+ * Consider organizing styles into separate files for maintainability.
+ */
+
+ /* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* 全体 */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f0f2f5;
+  color: #1a1a2e;
+}
+
+/* ナビゲーションバー */
+.navbar {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  padding: 1rem 0;
+}
+
+.navbar-brand {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #e94560 !important;
+}
+
+.nav-link {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.3s;
+  color: #a0a8c0 !important;
+}
+
+.nav-link:hover {
+  color: #e94560 !important;
+}
+
+/* メインコンテンツ */
+main.container {
+  min-height: 80vh;
+}
+
+/* カード */
+.card {
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  background: #ffffff;
+}
+
+.card-header {
+  border-radius: 16px 16px 0 0 !important;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+  padding: 1.2rem 1.5rem;
+}
+
+/* ボタン */
+.btn-primary {
+  background: linear-gradient(135deg, #e94560 0%, #c23152 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 0.6rem 1.4rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(233,69,96,0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(233,69,96,0.4);
+  background: linear-gradient(135deg, #c23152 0%, #e94560 100%);
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f5a623 0%, #e09400 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-warning:hover {
+  transform: translateY(-2px);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #e94560 0%, #c23152 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #545b62 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  color: white;
+  transition: all 0.3s;
+}
+
+.btn-info:hover {
+  transform: translateY(-2px);
+  color: white;
+}
+
+/* テーブル */
+.table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  background: white;
+}
+
+.table thead.table-dark th {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #a0a8c0;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border: none;
+  padding: 1rem;
+}
+
+.table tbody tr {
+  transition: background 0.2s;
+}
+
+.table tbody tr:hover {
+  background-color: #f8f0ff;
+}
+
+.table tbody td {
+  padding: 0.9rem 1rem;
+  vertical-align: middle;
+  border-color: #f0f2f5;
+}
+
+/* バッジ */
+.badge.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%) !important;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.badge.bg-danger {
+  background: linear-gradient(135deg, #e94560 0%, #c23152 100%) !important;
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* フォーム */
+.form-control, .form-select {
+  border-radius: 8px;
+  border: 2px solid #e8ecf0;
+  padding: 0.7rem 1rem;
+  transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #e94560;
+  box-shadow: 0 0 0 3px rgba(233,69,96,0.15);
+}
+
+.form-label {
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 0.4rem;
+}
+
+/* フラッシュメッセージ */
+.alert-success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border: none;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* ページタイトル */
+h1 {
+  font-weight: 700;
+  color: #1a1a2e;
+  letter-spacing: -0.5px;
+}
+
+/* フッター */
+footer {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+  letter-spacing: 0.5px;
+}
+
+/* エラーメッセージ */
+.error-messages {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.error-messages p {
+  font-weight: 600;
+  color: #721c24;
+  margin-bottom: 0.5rem;
+}
+
+.error-messages ul {
+  margin-bottom: 0;
+  color: #721c24;
+}

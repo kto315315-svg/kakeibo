@@ -1,0 +1,14 @@
+<h1>収支詳細</h1>
+
+<div>
+  <p>日付：<%= @record.date %></p>
+  <p>金額：<%= @record.amount %>円</p>
+  <p>収入/支出：<%= @record.income_or_expense %></p>
+  <p>カテゴリ：<%= @record.category.name %></p>
+  <p>タグ：<%= @record.tags.map(&:name).join(", ") %></p>
+  <p>メモ：<%= @record.memo %></p>
+</div>
+
+<%= link_to "編集する", edit_record_path(@record) %>
+<%= link_to "削除する", record_path(@record), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+<%= link_to "一覧に戻る", records_path %>

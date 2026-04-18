@@ -1,0 +1,156 @@
+<%# 月別ナビゲーション %>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>収支一覧</h1>
+  <%= link_to "＋ 収支を登録する", new_record_path, class: "btn btn-primary" %>
+</div>
+
+<%# 月切り替え %>
+<div class="d-flex justify-content-center align-items-center mb-4 gap-3">
+  <%= link_to "< 前月", records_path(year: @month == 1 ? @year - 1 : @year, month: @month == 1 ? 12 : @month - 1), class: "btn btn-outline-secondary" %>
+  <h4 class="mb-0"><%= @year %>年 <%= @month %>月</h4>
+  <%= link_to "次月 >", records_path(year: @month == 12 ? @year + 1 : @year, month: @month == 12 ? 1 : @month + 1), class: "btn btn-outline-secondary" %>
+</div>
+
+<%# 月別集計カード %>
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <p class="text-muted mb-1">今月の収入</p>
+      <h3 class="text-success fw-bold">¥<%= number_with_delimiter(@income) %></h3>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <p class="text-muted mb-1">今月の支出</p>
+      <h3 class="text-danger fw-bold">¥<%= number_with_delimiter(@expense) %></h3>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-center p-3">
+      <p class="text-muted mb-1">今月の収支</p>
+      <h3 class="fw-bold <%= @balance >= 0 ? 'text-success' : 'text-danger' %>">
+        ¥<%= number_with_delimiter(@balance) %>
+      </h3>
+    </div>
+  </div>
+</div>
+
+<%# グラフ %>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">📊 <%= @year %>年 <%= @month %>月 カテゴリ別支出</h5>
+    <% if @chart_data.present? %>
+      <div class="d-flex justify-content-center">
+        <canvas id="expenseChart" style="max-width: 400px; max-height: 400px;"></canvas>
+      </div>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'doughnut',
+          data: {
+            labels: <%= raw @chart_data.keys.to_json %>,
+            datasets: [{
+              data: <%= raw @chart_data.values.to_json %>,
+              backgroundColor: [
+                '#e94560', '#0f3460', '#f5a623', '#28a745',
+                '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'
+              ],
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  padding: 20,
+                  font: { size: 13 }
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return context.label + ': ¥' + context.parsed.toLocaleString();
+                  }
+                }
+              }
+            }
+          }
+        });
+      </script>
+    <% else %>
+      <p class="text-muted text-center">今月の支出データがありません</p>
+    <% end %>
+  </div>
+</div>
+
+<%# 検索・絞り込みフォーム %>
+<div class="card mb-4">
+  <div class="card-body">
+    <%= form_with url: records_path, method: :get do |f| %>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <%= f.label :keyword, "キーワード（メモ）", class: "form-label" %>
+          <%= f.text_field :keyword, value: params[:keyword], class: "form-control", placeholder: "メモを検索" %>
+        </div>
+        <div class="col-md-3">
+          <%= f.label :category_id, "カテゴリ", class: "form-label" %>
+          <%= f.collection_select :category_id, Category.all, :id, :name, { include_blank: "すべて" }, { class: "form-select" } %>
+        </div>
+        <div class="col-md-3">
+          <%= f.label :income_or_expense, "収入/支出", class: "form-label" %>
+          <%= f.select :income_or_expense, ["収入", "支出"], { include_blank: "すべて" }, { class: "form-select" } %>
+        </div>
+        <div class="col-md-2 d-flex align-items-end gap-2">
+          <%= f.submit "検索", class: "btn btn-primary w-100" %>
+          <%= link_to "リセット", records_path, class: "btn btn-secondary w-100" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%# 収支一覧テーブル %>
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>日付</th>
+          <th>金額</th>
+          <th>収入/支出</th>
+          <th>カテゴリ</th>
+          <th>タグ</th>
+          <th>メモ</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @records.each do |record| %>
+          <tr>
+            <td><%= record.date %></td>
+            <td>¥<%= number_with_delimiter(record.amount) %></td>
+            <td>
+              <% if record.income_or_expense == "収入" %>
+                <span class="badge bg-success">収入</span>
+              <% else %>
+                <span class="badge bg-danger">支出</span>
+              <% end %>
+            </td>
+            <td><%= record.category.name %></td>
+            <td><%= record.tags.map(&:name).join(", ") %></td>
+            <td><%= record.memo %></td>
+            <td>
+              <%= link_to "詳細", record_path(record), class: "btn btn-sm btn-info" %>
+              <%= link_to "編集", edit_record_path(record), class: "btn btn-sm btn-warning" %>
+              <%= link_to "削除", record_path(record), class: "btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

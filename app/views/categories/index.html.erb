@@ -1,0 +1,28 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>カテゴリ一覧</h1>
+  <%= link_to "＋ カテゴリを追加する", new_category_path, class: "btn btn-primary" %>
+</div>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th>カテゴリ名</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @categories.each do |category| %>
+          <tr>
+            <td><%= category.name %></td>
+            <td>
+              <%= link_to "編集", edit_category_path(category), class: "btn btn-sm btn-warning" %>
+              <%= link_to "削除", category_path(category), class: "btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

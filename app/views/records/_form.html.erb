@@ -1,0 +1,55 @@
+<div class="card">
+  <div class="card-body p-4">
+    <%= form_with model: @record do |f| %>
+      <% if @record.errors.any? %>
+        <div class="error-messages">
+          <p><%= @record.errors.count %>件のエラーがあります</p>
+          <ul>
+            <% @record.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="mb-3">
+        <%= f.label :date, "日付", class: "form-label" %>
+        <%= f.date_field :date, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :amount, "金額", class: "form-label" %>
+        <%= f.number_field :amount, class: "form-control", placeholder: "例：1000" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :income_or_expense, "収入/支出", class: "form-label" %>
+        <%= f.select :income_or_expense, ["収入", "支出"], { prompt: "選択してください" }, { class: "form-select" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :category_id, "カテゴリ", class: "form-label" %>
+        <%= f.collection_select :category_id, Category.all, :id, :name, { prompt: "選択してください" }, { class: "form-select" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :tag_ids, "タグ", class: "form-label" %>
+        <div class="d-flex flex-wrap gap-2">
+          <% Tag.all.each do |tag| %>
+            <div class="form-check">
+              <%= check_box_tag "record[tag_ids][]", tag.id, @record.tag_ids.include?(tag.id), id: "tag_#{tag.id}", class: "form-check-input" %>
+              <%= label_tag "tag_#{tag.id}", tag.name, class: "form-check-label" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :memo, "メモ", class: "form-label" %>
+        <%= f.text_area :memo, class: "form-control", rows: 3, placeholder: "メモを入力（任意）" %>
+      </div>
+
+      <%= f.submit class: "btn btn-primary w-100" %>
+    <% end %>
+  </div>
+</div>
