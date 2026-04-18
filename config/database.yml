@@ -12,15 +12,23 @@ test:
   database: storage/test.sqlite3
 
 production:
-  adapter: postgresql
-  url: <%= ENV['DATABASE_URL'] %>
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  # 1. メインのDB設定
+  primary: &primary_production
+    adapter: postgresql
+    url: <%= ENV['DATABASE_URL'] %>
+    pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
-  # ここを追加
+  # 2. Action Cable用の設定 (Solid Cable)
   cable:
     <<: *primary_production
     migrations_paths: db/cable_migrate
 
+  # 3. ジョブキュー用の設定 (Solid Queue) ※ここが抜けているとエラーになります
   queue:
     <<: *primary_production
     migrations_paths: db/queue_migrate
+
+  # 4. キャッシュ用の設定 (Solid Cache) ※Rails 8ではここも追加しておくのが安全です
+  cache:
+    <<: *primary_production
+    migrations_paths: db/cache_migrate
