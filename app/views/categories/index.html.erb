@@ -1,28 +1,20 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-  <h1>カテゴリ一覧</h1>
-  <%= link_to "＋ カテゴリを追加する", new_category_path, class: "btn btn-primary" %>
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>カテゴリ</h1>
+  <%= link_to "＋ 追加", new_category_path, class: "btn btn-primary btn-sm" %>
 </div>
 
 <div class="card">
   <div class="card-body p-0">
-    <table class="table table-hover mb-0">
-      <thead class="table-dark">
-        <tr>
-          <th>カテゴリ名</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @categories.each do |category| %>
-          <tr>
-            <td><%= category.name %></td>
-            <td>
-              <%= link_to "編集", edit_category_path(category), class: "btn btn-sm btn-warning" %>
-              <%= link_to "削除", category_path(category), class: "btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <% @categories.each_with_index do |category, index| %>
+      <div class="d-flex justify-content-between align-items-center px-3 py-2 <%= index != @categories.length - 1 ? 'border-bottom' : '' %>" style="border-color: rgba(255,255,255,0.05) !important;">
+        <span style="font-size: 0.95rem; color: #e0e0e0;">
+          <%= category.name %>
+        </span>
+        <div class="d-flex gap-2">
+          <%= link_to "編集", edit_category_path(category), class: "btn btn-sm btn-warning" %>
+          <%= link_to "削除", category_path(category), class: "btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

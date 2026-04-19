@@ -13,24 +13,24 @@
 
 <%# 月別集計カード %>
 <div class="row mb-4">
-  <div class="col-md-4">
+  <div class="col-4">
     <div class="card text-center p-3">
-      <p class="text-muted mb-1">今月の収入</p>
-      <h3 class="text-success fw-bold">¥<%= number_with_delimiter(@income) %></h3>
+      <p class="text-muted mb-1" style="font-size: 0.75rem;">今月の収入</p>
+      <h4 class="text-success fw-bold mb-0" style="font-size: 1.1rem;">¥<%= number_with_delimiter(@income) %></h4>
     </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-4">
     <div class="card text-center p-3">
-      <p class="text-muted mb-1">今月の支出</p>
-      <h3 class="text-danger fw-bold">¥<%= number_with_delimiter(@expense) %></h3>
+      <p class="text-muted mb-1" style="font-size: 0.75rem;">今月の支出</p>
+      <h4 class="text-danger fw-bold mb-0" style="font-size: 1.1rem;">¥<%= number_with_delimiter(@expense) %></h4>
     </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-4">
     <div class="card text-center p-3">
-      <p class="text-muted mb-1">今月の収支</p>
-      <h3 class="fw-bold <%= @balance >= 0 ? 'text-success' : 'text-danger' %>">
+      <p class="text-muted mb-1" style="font-size: 0.75rem;">収支</p>
+      <h4 class="fw-bold mb-0 <%= @balance >= 0 ? 'text-success' : 'text-danger' %>" style="font-size: 1.1rem;">
         ¥<%= number_with_delimiter(@balance) %>
-      </h3>
+      </h4>
     </div>
   </div>
 </div>
@@ -38,10 +38,13 @@
 <%# グラフ %>
 <div class="card mb-4">
   <div class="card-body">
-    <h5 class="fw-bold mb-3">📊 <%= @year %>年 <%= @month %>月 カテゴリ別支出</h5>
+    <h5 class="fw-bold mb-1">📊 <%= @year %>年 <%= @month %>月 カテゴリ別支出</h5>
+    <p class="mb-3" style="color: #e94560; font-size: 0.9rem; font-weight: 600;">
+      合計支出：¥<%= number_with_delimiter(@expense) %>
+    </p>
     <% if @chart_data.present? %>
       <div class="d-flex justify-content-center">
-        <canvas id="expenseChart" style="max-width: 400px; max-height: 400px;"></canvas>
+        <canvas id="expenseChart" style="max-width: 300px; max-height: 300px;"></canvas>
       </div>
       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       <script>
@@ -57,7 +60,7 @@
                 '#17a2b8', '#6f42c1', '#fd7e14', '#20c997'
               ],
               borderWidth: 2,
-              borderColor: '#ffffff'
+              borderColor: '#1a1a2e'
             }]
           },
           options: {
@@ -66,14 +69,17 @@
               legend: {
                 position: 'bottom',
                 labels: {
-                  padding: 20,
-                  font: { size: 13 }
+                  color: '#a0a8c0',
+                  padding: 12,
+                  font: { size: 11 }
                 }
               },
               tooltip: {
                 callbacks: {
                   label: function(context) {
-                    return context.label + ': ¥' + context.parsed.toLocaleString();
+                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    const percent = Math.round(context.parsed / total * 100);
+                    return context.label + ': ¥' + context.parsed.toLocaleString() + ' (' + percent + '%)';
                   }
                 }
               }
@@ -90,7 +96,14 @@
 <%# 貯金推移グラフ %>
 <div class="card mb-4">
   <div class="card-body">
-    <h5 class="fw-bold mb-3">💰 過去6ヶ月の収支推移</h5>
+    <h5 class="fw-bold mb-1">💰 過去6ヶ月の収支推移</h5>
+    <p class="mb-3" style="color: #f5c842; font-size: 0.9rem; font-weight: 600;">
+      収支差額：
+      <% total_balance = @savings_data.sum { |d| d[:balance] } %>
+      <span class="<%= total_balance >= 0 ? 'text-success' : 'text-danger' %>">
+        ¥<%= number_with_delimiter(total_balance) %>
+      </span>
+    </p>
     <canvas id="savingsChart"></canvas>
     <script>
       const savingsCtx = document.getElementById('savingsChart').getContext('2d');
@@ -118,13 +131,13 @@
             {
               label: '残高',
               data: <%= raw @savings_data.map { |d| d[:balance] }.to_json %>,
-              backgroundColor: 'rgba(15, 52, 96, 0.7)',
-              borderColor: 'rgba(15, 52, 96, 1)',
+              backgroundColor: 'rgba(245, 200, 66, 0.7)',
+              borderColor: 'rgba(245, 200, 66, 1)',
               borderWidth: 2,
               borderRadius: 6,
               type: 'line',
               fill: false,
-              pointBackgroundColor: '#e94560',
+              pointBackgroundColor: '#f5c842',
               pointRadius: 5,
             }
           ]
@@ -136,8 +149,8 @@
               position: 'bottom',
               labels: {
                 color: '#a0a8c0',
-                padding: 20,
-                font: { size: 12 }
+                padding: 12,
+                font: { size: 11 }
               }
             },
             tooltip: {
@@ -150,12 +163,13 @@
           },
           scales: {
             x: {
-              ticks: { color: '#a0a8c0' },
+              ticks: { color: '#a0a8c0', font: { size: 11 } },
               grid: { color: 'rgba(255,255,255,0.05)' }
             },
             y: {
               ticks: {
                 color: '#a0a8c0',
+                font: { size: 11 },
                 callback: function(value) {
                   return '¥' + value.toLocaleString();
                 }
@@ -195,44 +209,43 @@
   </div>
 </div>
 
-<%# 収支一覧テーブル %>
-<div class="card">
-  <div class="card-body p-0">
-    <table class="table table-hover mb-0">
-      <thead class="table-dark">
-        <tr>
-          <th>日付</th>
-          <th>金額</th>
-          <th>収入/支出</th>
-          <th>カテゴリ</th>
-          <th>タグ</th>
-          <th>メモ</th>
-          <th>操作</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @records.each do |record| %>
-          <tr>
-            <td><%= record.date %></td>
-            <td>¥<%= number_with_delimiter(record.amount) %></td>
-            <td>
-              <% if record.income_or_expense == "収入" %>
-                <span class="badge bg-success">収入</span>
-              <% else %>
-                <span class="badge bg-danger">支出</span>
-              <% end %>
-            </td>
-            <td><%= record.category.name %></td>
-            <td><%= record.tags.map(&:name).join(", ") %></td>
-            <td><%= record.memo %></td>
-            <td>
-              <%= link_to "詳細", record_path(record), class: "btn btn-sm btn-info" %>
-              <%= link_to "編集", edit_record_path(record), class: "btn btn-sm btn-warning" %>
-              <%= link_to "削除", record_path(record), class: "btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+<%# 収支一覧 %>
+<div class="mb-2 d-flex justify-content-between align-items-center">
+  <h5 class="fw-bold mb-0">収支一覧</h5>
+  <%= link_to "＋ 登録する", new_record_path, class: "btn btn-primary btn-sm" %>
 </div>
+
+<% @records.each do |record| %>
+  <div class="card mb-2">
+    <div class="card-body py-2 px-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <span class="badge <%= record.income_or_expense == '収入' ? 'bg-success' : 'bg-danger' %> me-2">
+            <%= record.income_or_expense %>
+          </span>
+          <span style="font-size: 0.85rem; color: #a0a8c0;"><%= record.date %></span>
+        </div>
+        <span class="fw-bold <%= record.income_or_expense == '収入' ? 'text-success' : 'text-danger' %>" style="font-size: 1rem;">
+          ¥<%= number_with_delimiter(record.amount) %>
+        </span>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-1">
+        <div>
+          <span style="font-size: 0.8rem; color: #a0a8c0;">
+            <%= record.category.name %>
+            <% if record.tags.any? %>
+              ・<%= record.tags.map(&:name).join(", ") %>
+            <% end %>
+          </span>
+          <% if record.memo.present? %>
+            <br><span style="font-size: 0.8rem; color: #606080;">📝 <%= record.memo %></span>
+          <% end %>
+        </div>
+        <div class="d-flex gap-1">
+          <%= link_to "編集", edit_record_path(record), class: "btn btn-sm btn-warning" %>
+          <%= link_to "削除", record_path(record), class: "btn btn-sm btn-danger", data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
