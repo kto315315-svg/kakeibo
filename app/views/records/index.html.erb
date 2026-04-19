@@ -87,6 +87,88 @@
   </div>
 </div>
 
+<%# 貯金推移グラフ %>
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">💰 過去6ヶ月の収支推移</h5>
+    <canvas id="savingsChart"></canvas>
+    <script>
+      const savingsCtx = document.getElementById('savingsChart').getContext('2d');
+      new Chart(savingsCtx, {
+        type: 'bar',
+        data: {
+          labels: <%= raw @savings_data.map { |d| d[:month] }.to_json %>,
+          datasets: [
+            {
+              label: '収入',
+              data: <%= raw @savings_data.map { |d| d[:income] }.to_json %>,
+              backgroundColor: 'rgba(40, 167, 69, 0.7)',
+              borderColor: 'rgba(40, 167, 69, 1)',
+              borderWidth: 2,
+              borderRadius: 6,
+            },
+            {
+              label: '支出',
+              data: <%= raw @savings_data.map { |d| d[:expense] }.to_json %>,
+              backgroundColor: 'rgba(233, 69, 96, 0.7)',
+              borderColor: 'rgba(233, 69, 96, 1)',
+              borderWidth: 2,
+              borderRadius: 6,
+            },
+            {
+              label: '残高',
+              data: <%= raw @savings_data.map { |d| d[:balance] }.to_json %>,
+              backgroundColor: 'rgba(15, 52, 96, 0.7)',
+              borderColor: 'rgba(15, 52, 96, 1)',
+              borderWidth: 2,
+              borderRadius: 6,
+              type: 'line',
+              fill: false,
+              pointBackgroundColor: '#e94560',
+              pointRadius: 5,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: '#a0a8c0',
+                padding: 20,
+                font: { size: 12 }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ¥' + context.parsed.y.toLocaleString();
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#a0a8c0' },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            },
+            y: {
+              ticks: {
+                color: '#a0a8c0',
+                callback: function(value) {
+                  return '¥' + value.toLocaleString();
+                }
+              },
+              grid: { color: 'rgba(255,255,255,0.05)' }
+            }
+          }
+        }
+      });
+    </script>
+  </div>
+</div>
+
 <%# 検索・絞り込みフォーム %>
 <div class="card mb-4">
   <div class="card-body">

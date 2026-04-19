@@ -28,6 +28,23 @@ class RecordsController < ApplicationController
       .joins(:category)
       .group("categories.name")
       .sum(:amount)
+
+      # 貯金グラフ用データ（過去6ヶ月）
+      @savings_data = []
+      6.times do |i|
+        target_date = Date.today - i.months
+        monthly = current_user.records.where(
+          date: target_date.beginning_of_month..target_date.end_of_month
+        )
+        income  = monthly.where(income_or_expense: "収入").sum(:amount)
+        expense = monthly.where(income_or_expense: "支出").sum(:amount)
+        @savings_data.unshift({
+          month: target_date.strftime("%m月"),
+          income: income,
+          expense: expense,
+          balance: income - expense
+        })
+      end
   end
 
   def show
